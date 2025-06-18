@@ -27,8 +27,10 @@ Two clients are involved in this test topology: **client1** and **client2**.
 **client1** is connected to two leaf switches, **leaf1** and **leaf2**, with an LACP bond `bond0` configured on **client1**. **client1** is simulated to contain multiple workload IPs from the `100.0.1.0/24` range.  
 **leaf1** and **leaf2** are both configured with a single-member LACP LAG `lag1`, configured as part of the ESI of `01:24:24:24:24:24:24:00:00:11` and EVI of `1`. This ESI and EVI must match between **leaf1** and **leaf2**, and in general, the configuration between these two switches is identical (save for the link addressing and ASNs).
 
-The LAG and associated ESI lives inside the `mclag` network instance, which is a `mac-vrf` type network instance. Connecting this network instance to the `default` network instance is `irb0`, which hosts the anycast gateway serving the client subnet, `100.0.1.1`. The `default` network instance allows us to interconnect our network via eBGP peerings, advertising the client subnet `100.0.1.0/24` towards the rest of the eBGP fabric.  
-The quirk of this design is the inter-switch link between **leaf1** and **leaf2** via `ethernet-1/10`. This link is normally not part of Clos topologies, and has been added to limit the EVPN-VXLAN overlay to only exist between the two leafs. Traffic is sent over this link via a VXLAN tunnel in case it is **BUM** traffic and the switch is not the **DF** for the destination **EVI**, or if the switch's connection to the **ES** is down.
+The LAG and associated ESI lives inside the `mclag` network instance, which is a `mac-vrf` type network instance. Connecting this network instance to the `default` network instance is `irb0`, which hosts the anycast gateway serving the client subnet, `100.0.1.1`. The `default` network instance allows us to interconnect our network via eBGP peerings, advertising the client subnet `100.0.1.0/24` towards the rest of the eBGP fabric.
+
+The quirk of this design is the inter-switch link between **leaf1** and **leaf2** via `ethernet-1/10`. This link is normally not part of Clos topologies, and has been added to limit the EVPN-VXLAN overlay to only exist between the two leafs.  
+Traffic is sent over this link via a VXLAN tunnel in case it is **BUM** traffic and the switch is not the **DF** for the destination **EVI**, or if the switch's connection to the **ES** is down.
 
 **client2** is connected via **leaf3**, and simulates multiple service IPs in the `100.0.2.0/24` range, with the gateway `100.0.2.1` configured on **leaf3**'s `irb0` interface.
 
@@ -132,7 +134,9 @@ Two clients are involved in this test topology: **client1** and **client2**.
 3 leaf switches, **leaf1-3** connect **client1** to the network, while **client2** is connected via **leaf4-5**. The leaf switches are connected via spines **spine1** and **spine2** in a Clos topology.
 
 **client1** runs FRR as its host routing daemon with AS65000 as its ASN. The simulated workload of the client are the 5 IPs bound to its `lo` loopback interface, `100.0.1.101/32` to `100.0.1.105/32`.
-These /32 host routes are advertised into the data center fabric via the three links to three separate leaf switches, **leaf1-3**. There is no gateway IP address in this setup.  
+These /32 host routes are advertised into the data center fabric via the three links to three separate leaf switches, **leaf1-3**.  
+There is no gateway IP address in this setup.
+
 **client2** has a similar configuration, except with simulated workload IPs are in the `100.0.2.0/24` range.
 
 8-way ECMP has been configured on all SR Linux switches to enable ECMP across the entire fabric.
@@ -224,7 +228,7 @@ B>* 100.0.2.105/32 [20/0] via 10.0.100.1, eth1, weight 1, 00:00:14
   *                       via 10.0.100.5, eth3, weight 1, 00:00:14
 ```
 
-We can see the 3-way ECMP working nicely in this output.
+We can see the 3-way ECMP on **client1** working nicely in this output.
 
 A test scenario can be run by executing the included `option2-traffic.sh` shell script, which starts iPerf traffic from **client2** to **client1**, and displays a traffic monitor on **client1**.
 
