@@ -1,0 +1,104 @@
+name: option2-hostrouting
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:25.3
+      startup-config: ./option2-configs/__clabNodeName__.cfg
+    linux:
+      image: quay.io/frrouting/frr:10.2.3
+      binds:
+        - ./option2-configs/__clabNodeName__.conf:/etc/frr/frr.conf
+        - ./option2-configs/frr-daemons.conf:/etc/frr/daemons
+
+  nodes:
+    leaf1:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "105"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    leaf2:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "155"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    leaf3:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "205"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    leaf4:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "255"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    leaf5:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "305"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    spine1:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "155"
+        graph-posY: "-35"
+        graph-icon: spine
+        graph-groupLabelPos: bottom-center
+    spine2:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "255"
+        graph-posY: "-35"
+        graph-icon: spine
+        graph-groupLabelPos: bottom-center
+    client1:
+      kind: linux
+      labels:
+        graph-posX: "155"
+        graph-posY: "115"
+        graph-icon: client
+        graph-groupLabelPos: bottom-center
+    client2:
+      kind: linux
+      labels:
+        graph-posX: "285"
+        graph-posY: "115"
+        graph-icon: client
+        graph-groupLabelPos: bottom-center
+
+  links:
+    # Client 1 connections
+    - endpoints: [ leaf1:ethernet-1/1, client1:eth1 ]
+    - endpoints: [ leaf2:ethernet-1/1, client1:eth2 ]
+    - endpoints: [ leaf3:ethernet-1/1, client1:eth3 ]
+    # Leaf <-> Spine links
+    - endpoints: [ leaf1:ethernet-1/31, spine1:ethernet-1/1 ]
+    - endpoints: [ leaf1:ethernet-1/32, spine2:ethernet-1/1 ]
+    - endpoints: [ leaf2:ethernet-1/31, spine1:ethernet-1/2 ]
+    - endpoints: [ leaf2:ethernet-1/32, spine2:ethernet-1/2 ]
+    - endpoints: [ leaf3:ethernet-1/31, spine1:ethernet-1/3 ]
+    - endpoints: [ leaf3:ethernet-1/32, spine2:ethernet-1/3 ]
+    - endpoints: [ leaf4:ethernet-1/31, spine1:ethernet-1/4 ]
+    - endpoints: [ leaf4:ethernet-1/32, spine2:ethernet-1/4 ]
+    - endpoints: [ leaf5:ethernet-1/31, spine1:ethernet-1/5 ]
+    - endpoints: [ leaf5:ethernet-1/32, spine2:ethernet-1/5 ]
+    # Client 2 connection
+    - endpoints: [ leaf4:ethernet-1/1, client2:eth1 ]
+    - endpoints: [ leaf5:ethernet-1/1, client2:eth2 ]

@@ -1,0 +1,112 @@
+name: option1-evpn-mh
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:25.3
+      startup-config: ./option1-configs/__clabNodeName__.cfg
+    linux:
+      image: ghcr.io/srl-labs/network-multitool:latest
+
+  nodes:
+    leaf1:
+      kind: nokia_srlinux
+      type: ixrd5
+      labels:
+        graph-posX: "105"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    leaf2:
+      kind: nokia_srlinux
+      type: ixrd5
+      labels:
+        graph-posX: "205"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    leaf3:
+      kind: nokia_srlinux
+      type: ixrd5
+      labels:
+        graph-posX: "295"
+        graph-posY: "45"
+        graph-icon: switch
+        graph-groupLabelPos: bottom-center
+    spine1:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "155"
+        graph-posY: "-35"
+        graph-icon: spine
+        graph-groupLabelPos: bottom-center
+    spine2:
+      kind: nokia_srlinux
+      type: ixrh432d
+      labels:
+        graph-posX: "245"
+        graph-posY: "-35"
+        graph-icon: spine
+        graph-groupLabelPos: bottom-center
+    client1:
+      kind: linux
+      labels:
+        graph-posX: "155"
+        graph-posY: "115"
+        graph-icon: client
+        graph-groupLabelPos: bottom-center
+      exec:
+          # LACP link setup
+          - ip link set dev eth1 down
+          - ip link set dev eth2 down
+          - ip link add name bond0 type bond mode 802.3ad
+          - ip link set dev bond0 up
+          - ip link set dev eth1 master bond0
+          - ip link set dev eth2 master bond0
+          - ip link set dev eth1 up
+          - ip link set dev eth2 up
+          # Link addressing + routing
+          - ip address add 100.0.1.101/24 dev bond0
+          - ip address add 100.0.1.102/24 dev bond0
+          - ip address add 100.0.1.103/24 dev bond0
+          - ip address add 100.0.1.104/24 dev bond0
+          - ip address add 100.0.1.105/24 dev bond0
+          - ip route add 100.0.0.0/16 via 100.0.1.1
+          # Start iPerf servers on 100.0.1.101 and 100.0.1.102
+          - iperf3 -s -B 100.0.1.101 -p5201 -D
+          - iperf3 -s -B 100.0.1.101 -p5202 -D
+          - iperf3 -s -B 100.0.1.101 -p5203 -D
+          - iperf3 -s -B 100.0.1.102 -p5201 -D
+          - iperf3 -s -B 100.0.1.102 -p5202 -D
+          - iperf3 -s -B 100.0.1.102 -p5203 -D
+    client2:
+      kind: linux
+      labels:
+        graph-posX: "295"
+        graph-posY: "115"
+        graph-icon: client
+        graph-groupLabelPos: bottom-center
+      exec:
+        - ip address add 100.0.2.101/24 dev eth1
+        - ip address add 100.0.2.102/24 dev eth1
+        - ip address add 100.0.2.103/24 dev eth1
+        - ip address add 100.0.2.104/24 dev eth1
+        - ip address add 100.0.2.105/24 dev eth1
+        - ip route add 100.0.0.0/16 via 100.0.2.1
+
+  links:
+    # Inter-Leaf link for EVPN ESI MH
+    - endpoints: [ leaf1:ethernet-1/10, leaf2:ethernet-1/10 ]
+    # Client 1 connections
+    - endpoints: [ leaf1:ethernet-1/1, client1:eth1 ]
+    - endpoints: [ leaf2:ethernet-1/1, client1:eth2 ]
+    # Leaf <-> Spine links
+    - endpoints: [ leaf1:ethernet-1/31, spine1:ethernet-1/1 ]
+    - endpoints: [ leaf1:ethernet-1/32, spine2:ethernet-1/1 ]
+    - endpoints: [ leaf2:ethernet-1/31, spine1:ethernet-1/2 ]
+    - endpoints: [ leaf2:ethernet-1/32, spine2:ethernet-1/2 ]
+    - endpoints: [ leaf3:ethernet-1/31, spine1:ethernet-1/3 ]
+    - endpoints: [ leaf3:ethernet-1/32, spine2:ethernet-1/3 ]
+    # Client 2 connection
+    - endpoints: [ leaf3:ethernet-1/1, client2:eth1 ]
