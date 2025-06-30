@@ -1,0 +1,14 @@
+- name: Get from running
+  hosts: leaf1
+  gather_facts: false
+  tasks:
+  - name: Get data from SRlinux device
+    nokia.srlinux.get:
+      paths:
+        - path: /network-instance[name=default]/protocols/bgp/neighbor
+          datastore: running
+    register: response
+
+  - name: Print response
+    ansible.builtin.debug:
+      var: response.result[0]

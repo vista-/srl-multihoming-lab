@@ -1,5 +1,9 @@
 name: option1-evpn-mh
 
+mgmt:
+  network: option1-evpn-mh
+  ipv4-subnet: 172.20.30.0/24
+
 topology:
   kinds:
     nokia_srlinux:
@@ -12,43 +16,53 @@ topology:
     leaf1:
       kind: nokia_srlinux
       type: ixrd5
+      mgmt-ipv4: 172.20.30.11
       labels:
         graph-posX: "105"
         graph-posY: "45"
         graph-icon: switch
         graph-groupLabelPos: bottom-center
+        ansible-group: leaf
     leaf2:
       kind: nokia_srlinux
       type: ixrd5
+      mgmt-ipv4: 172.20.30.12
       labels:
         graph-posX: "205"
         graph-posY: "45"
         graph-icon: switch
         graph-groupLabelPos: bottom-center
+        ansible-group: leaf
     leaf3:
       kind: nokia_srlinux
       type: ixrd5
+      mgmt-ipv4: 172.20.30.13
       labels:
         graph-posX: "295"
         graph-posY: "45"
         graph-icon: switch
         graph-groupLabelPos: bottom-center
+        ansible-group: leaf
     spine1:
       kind: nokia_srlinux
       type: ixrh432d
+      mgmt-ipv4: 172.20.30.21
       labels:
         graph-posX: "155"
         graph-posY: "-35"
         graph-icon: spine
         graph-groupLabelPos: bottom-center
+        ansible-group: spine
     spine2:
       kind: nokia_srlinux
       type: ixrh432d
+      mgmt-ipv4: 172.20.30.22
       labels:
         graph-posX: "245"
         graph-posY: "-35"
         graph-icon: spine
         graph-groupLabelPos: bottom-center
+        ansible-group: spine
     client1:
       kind: linux
       labels:

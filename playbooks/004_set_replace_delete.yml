@@ -1,0 +1,51 @@
+- name: Set config
+  hosts: leaf1
+  gather_facts: false
+  tasks:
+    - name: Get data from SRlinux device BEFORE
+      block:
+        - name: Get data from SRlinux device BEFORE
+          nokia.srlinux.get:
+            paths:
+              - path: /system/information
+                datastore: running
+              - path: /system/mtu
+                datastore: running
+          register: response
+
+        - name: Print /system/information config BEFORE
+          ansible.builtin.debug:
+            var: response.result[0]
+
+        - name: Print /system/mtu config BEFORE
+          ansible.builtin.debug:
+            var: response.result[1]
+
+    - name: Set config to SRlinux device
+      nokia.srlinux.config:
+        replace:
+          - path: /system/information
+            value:
+              contact: Network Administrator
+        delete:
+          - path: /system/mtu
+        save_when: changed
+
+    - name: Get data from SRlinux device AFTER
+      block:
+        - name: Get data from SRlinux device AFTER
+          nokia.srlinux.get:
+            paths:
+              - path: /system/information
+                datastore: running
+              - path: /system/mtu
+                datastore: running
+          register: response
+
+        - name: Print /system/information config AFTER
+          ansible.builtin.debug:
+            var: response.result[0]
+
+        - name: Print /system/mtu config AFTER
+          ansible.builtin.debug:
+            var: response.result[1]

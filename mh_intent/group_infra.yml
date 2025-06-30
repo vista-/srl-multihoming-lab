@@ -1,0 +1,15 @@
+srl:
+  system:
+    mtu:
+      default-port-mtu: 9216
+      default-ip-mtu: 9000
+    information:
+      location: Ansible CLAB demo
+      contact: Managed by Ansible
+  interfaces: {}
+  subinterface: {}
+
+leaf:
+  system:
+    mtu:
+      default-l2-mtu: 9216

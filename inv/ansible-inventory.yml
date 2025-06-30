@@ -1,0 +1,23 @@
+all:
+  children:
+    srl:
+      hosts:
+        leaf1:
+          ansible_host: 172.20.30.11
+        leaf2:
+          ansible_host: 172.20.30.12
+        leaf3:
+          ansible_host: 172.20.30.13
+        spine1:
+          ansible_host: 172.20.30.21
+        spine2:
+          ansible_host: 172.20.30.22
+    leaf:
+      hosts:
+       leaf1:
+       leaf2:
+       leaf3:
+    spine:
+      hosts:
+        spine1:
+        spine2:

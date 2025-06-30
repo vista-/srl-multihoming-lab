@@ -1,0 +1,10 @@
+leaf1:
+  interfaces:
+    ethernet-1/1:
+      TAGS:
+        - mh-1
+leaf2:
+  interfaces:
+    ethernet-1/1:
+      TAGS:
+        - mh-1

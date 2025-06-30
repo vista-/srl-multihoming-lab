@@ -1,0 +1,8 @@
+mh-1: # ID used to construct ESI <prefix>:<id>:<lag_id>, lag_id per rack, id farbic wide 
+  lag_id: lag1
+  mh_mode: all-active # all-active or single-active
+  description: mh-1:LAG1
+  interface_tags: # interfaces must be tagged with ANY tags specified in interface_tags
+    - mh-1
+  lacp: true
+  lacp_interval: SLOW

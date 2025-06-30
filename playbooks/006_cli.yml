@@ -1,0 +1,13 @@
+- name: CLI command
+  hosts: [leaf1, spine1]
+  gather_facts: false
+  tasks:
+  - name: Send cli command to SRlinux device
+    nokia.srlinux.cli:
+      commands:
+        - show version
+    register: response
+
+  - name: Print response
+    ansible.builtin.debug:
+      var: response.result[0]

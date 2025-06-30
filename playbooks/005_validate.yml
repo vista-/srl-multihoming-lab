@@ -1,0 +1,27 @@
+- name: Validate config
+  hosts: leaf1
+  gather_facts: false
+  tasks:
+  - name: Validate config changes with SRlinux device
+    nokia.srlinux.validate:
+      update:
+        - path: /system/mtu
+          value:
+            default-mtu: 10000
+    ignore_errors: true
+
+  - name: Validate config changes with SRlinux device
+    nokia.srlinux.validate:
+      update:
+        - path: /system/mtu
+          value:
+            default-port-mtu: 10000
+    ignore_errors: true
+
+  - name: Validate config changes with SRlinux device
+    nokia.srlinux.validate:
+      update:
+        - path: /system/mtu
+          value:
+            default-port-mtu: 9216
+    ignore_errors: true

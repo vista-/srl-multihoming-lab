@@ -1,0 +1,20 @@
+- name: Get from state
+  hosts: leaf1
+  gather_facts: false
+  tasks:
+  - name: Get data from SRlinux device
+    nokia.srlinux.get:
+      paths:
+        - path: /platform/control[slot=A]/software-version
+          datastore: state
+        - path: /network-instance[name=default]/protocols/bgp/neighbor[peer-address=*]/session-state
+          datastore: state
+    register: response
+
+  - name: Print version
+    ansible.builtin.debug:
+      var: response.result[0]
+
+  - name: Print BGP neighbors status
+    ansible.builtin.debug:
+      var: response.result[1]

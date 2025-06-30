@@ -1,0 +1,38 @@
+- name: Set config
+  hosts: srl
+  gather_facts: false
+  tasks:
+    - name: Get data from SRlinux device BEFORE
+      block:
+        - name: Get data from SRlinux device BEFORE
+          nokia.srlinux.get:
+            paths:
+              - path: /system/information
+                datastore: running
+          register: response
+
+        - name: Print /system/information config BEFORE
+          ansible.builtin.debug:
+            var: response.result[0]
+
+    - name: Set config to SRlinux device
+      nokia.srlinux.config:
+        update:
+          - path: /system/information
+            value:
+              location: Ansible CLAB demo
+              contact: Managed by Ansible
+        save_when: changed
+
+    - name: Get data from SRlinux device AFTER
+      block:
+        - name: Get data from SRlinux device AFTER
+          nokia.srlinux.get:
+            paths:
+              - path: /system/information
+                datastore: running
+          register: response
+
+        - name: Print  /system/information config AFTER
+          ansible.builtin.debug:
+            var: response.result[0]
