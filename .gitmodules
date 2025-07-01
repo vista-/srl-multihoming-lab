@@ -1,0 +1,3 @@
+[submodule "intent-based-ansible-lab"]
+	path = intent-based-ansible-lab
+	url = https://github.com/srl-labs/intent-based-ansible-lab.git
